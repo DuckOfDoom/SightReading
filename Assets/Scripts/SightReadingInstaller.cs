@@ -13,12 +13,12 @@ namespace DuckOfDoom.SightReading
                 .AsSingle()
                 .NonLazy();
             
-            Container.BindInterfacesTo<PitchDetector>()
+            Container.BindInterfacesTo<FrequencyDetector>()
                 .AsSingle()
                 .NonLazy();
 
             var mic = Container.Resolve<IMicrophoneHandler>();
-            var pDectector = Container.Resolve<IPitchDetector>();
+            var pDectector = Container.Resolve<IFrequencyDetector>();
 
             mic.SamplesStream.Subscribe(
                 samples =>
@@ -32,7 +32,7 @@ namespace DuckOfDoom.SightReading
             s += "]";
             
             Debug.LogError(s);
-                    Debug.LogError("Pitch: " + pDectector.DetectPitch(samples));
+                    Debug.LogError("Pitch: " + pDectector.GetFrequency(samples));
                 });
 
             // Container.Resolve<IMicrophoneHandler>().SamplesStream.Subscribe(

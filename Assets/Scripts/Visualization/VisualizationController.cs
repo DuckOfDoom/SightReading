@@ -6,24 +6,29 @@ using Zenject;
 
 namespace DuckOfDoom.SightReading.Visualization
 {
-    public interface IVisualization
+    public interface IVisualizationController
     {
         
     }
     
-    public class Visualization : MonoBehaviour, IVisualization
+    public class VisualizationController : MonoBehaviour, IVisualizationController
     {
         [Inject] private IMicrophoneHandler MicHandler { get; set; }
-        [Inject] private ISampleVisualizer Visualizer { get; set; }
+        [Inject] private IFrequencyDetector FrequencyDetector { get; set; }
+        [Inject] private IVisualizerView VisualizerView { get; set; }
         
         public void Start()
         {
             MicHandler.SamplesStream.Subscribe(
                     samples =>
                     {
-                        Visualizer.VisualizeSamples(
+                        VisualizerView.VisualizeSamples(
                             // CompressSamples(samples)
                             samples
+                        );
+
+                        VisualizerView.SetFrequency(
+                            FrequencyDetector.GetFrequency(samples)
                         );
                     })
                 .AddTo(this);

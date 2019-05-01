@@ -2,16 +2,16 @@ using UnityEngine;
 
 namespace DuckOfDoom.SightReading.AudioTools
 {
-    public interface IPitchDetector
+    public interface IFrequencyDetector
     {
-        float DetectPitch(float[] samples);
+        float GetFrequency(float[] samples);
     }
     
-    public class PitchDetector : IPitchDetector
+    public class FrequencyDetector : IFrequencyDetector
     {
         private const float MIN_AMPLITUDE = 0.02f;
             
-        public float DetectPitch(float[] samples)
+        public float GetFrequency(float[] samples)
         {
             // Min amplitude to extract pitch
             var maxSample = 0f;
