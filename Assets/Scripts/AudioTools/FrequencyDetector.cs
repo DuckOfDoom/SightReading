@@ -7,9 +7,10 @@ namespace DuckOfDoom.SightReading.AudioTools
         float GetFrequency(float[] samples);
     }
     
+    // https://answers.unity.com/questions/157940/getoutputdata-and-getspectrumdata-they-represent-t.htmlv
     public class FrequencyDetector : IFrequencyDetector
     {
-        private const float MIN_AMPLITUDE = 0.02f;
+        private const float MIN_AMPLITUDE = 0.001f;
             
         public float GetFrequency(float[] samples)
         {

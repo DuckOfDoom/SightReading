@@ -7,7 +7,7 @@ namespace DuckOfDoom.SightReading.Visualization
     public class VisualizationInstaller : MonoInstaller
     {
 #pragma warning disable 0649
-        [SerializeField] private VisualizerView _visualizerView;
+        [SerializeField] private VisualizationView _visualizationView;
 #pragma warning restore 0649
         
         public override void InstallBindings()
@@ -21,17 +21,27 @@ namespace DuckOfDoom.SightReading.Visualization
                 .FromNew()
                 .AsSingle()
                 .NonLazy();
-
-            Container.BindInterfacesTo<VisualizerView>()
-                .FromInstance(_visualizerView)
+            
+            Container.BindInterfacesTo<FrequencyConverter>()
+                .FromNew()
                 .AsSingle()
                 .NonLazy();
 
+            Container.BindInterfacesTo<VisualizationView>()
+                .FromInstance(_visualizationView)
+                .AsSingle()
+                .NonLazy();
+            
             Container.BindInterfacesTo<VisualizationController>()
-                .FromNewComponentOnNewGameObject()
-                .WithGameObjectName("VisualizationController")
+                .FromNew()
                 .AsSingle()
                 .NonLazy();
+
+            // Container.BindInterfacesTo<VisualizationController>()
+            //     .FromNewComponentOnNewGameObject()
+            //     .WithGameObjectName("VisualizationController")
+            //     .AsSingle()
+            //     .NonLazy();
         }
     }
 }

@@ -5,17 +5,20 @@ using UnityEngine.UI;
 
 namespace DuckOfDoom.SightReading.Visualization
 {
-    public interface IVisualizerView : IDisposable
+    public interface IVisualizationView : IDisposable
     {
         void VisualizeSamples(float[] samples);
+        
+        void SetNote(string note);
         void SetFrequency(float frequency);
     }
     
-    public class VisualizerView : MonoBehaviour, IVisualizerView
+    public class VisualizationView : MonoBehaviour, IVisualizationView
     {
 #pragma warning disable 0649
         [SerializeField] private Image _sourceImage; 
         [SerializeField] private Text _frequencyText; 
+        [SerializeField] private Text _noteText; 
         [SerializeField] private float _heightMultiplier = 1000; 
 #pragma warning restore 0649
 
@@ -33,6 +36,7 @@ namespace DuckOfDoom.SightReading.Visualization
         }
 
         public void SetFrequency(float frequency) { _frequencyText.text = $"Frequency: {frequency.ToString()} Hz"; }
+        public void SetNote(string note) { _noteText.text = $"Note: {note}"; }
 
         private void FixImagesCount(int count)
         {

@@ -1,53 +1,61 @@
-using System.Collections.Generic;
+using System;
 using DuckOfDoom.SightReading.AudioTools;
 using UniRx;
-using UnityEngine;
-using Zenject;
 
 namespace DuckOfDoom.SightReading.Visualization
 {
-    public interface IVisualizationController
+    public interface IVisualizationController : IDisposable
     {
         
     }
     
-    public class VisualizationController : MonoBehaviour, IVisualizationController
+    public class VisualizationController : IVisualizationController
     {
-        [Inject] private IMicrophoneHandler MicHandler { get; set; }
-        [Inject] private IFrequencyDetector FrequencyDetector { get; set; }
-        [Inject] private IVisualizerView VisualizerView { get; set; }
+        private readonly IDisposable _sub;
         
-        public void Start()
+        public VisualizationController(
+            IMicrophoneHandler micHandler,
+            IFrequencyDetector fDetector,
+            IFrequencyConverter fConverter,
+            IVisualizationView view
+            )
         {
-            MicHandler.SamplesStream.Subscribe(
-                    samples =>
-                    {
-                        VisualizerView.VisualizeSamples(
-                            // CompressSamples(samples)
-                            samples
-                        );
+            _sub = micHandler.SamplesStream.Subscribe(
+                samples =>
+                {
+                    // view.VisualizeSamples(samples);
 
-                        VisualizerView.SetFrequency(
-                            FrequencyDetector.GetFrequency(samples)
-                        );
-                    })
-                .AddTo(this);
+                    var frequency = fDetector.GetFrequency(samples);
+                    var note = fConverter.FrequencyToNote(frequency);
+                    
+                    view.SetFrequency(frequency);
+                    view.SetNote(note.ValueOr("UNKNOWN"));
+                });
         }
 
-        private float[] CompressSamples(float[] samples)
+        public void Dispose()
         {
-            // var newSamples = new float[samples.Length / 2];
-            var newSamples = new List<float>();
-            
-            for (var i = 0; i < samples.Length; i += 2)
-            {
-                var s1 = samples[i];
-                var s2 = samples[i+1];
-                
-                newSamples.Add((s1 + s2) / 2f);
-            }
+            _sub.Dispose();
+        }
 
-            return newSamples.ToArray();
+        public void Start()
+        {
+            // MicHandler.SamplesStream.Subscribe(
+            //         samples =>
+            //         {
+            //             VisualizationView.VisualizeSamples(
+            //                 samples
+            //             );
+            //
+            //             var frequency = FrequencyDetector.GetFrequency(samples);
+            //             VisualizationView.SetFrequency(frequency);
+            //             
+            //             VisualizationView.SetNote(
+            //                 FrequencyConverter.FrequencyToNote(frequency)
+            //                     .ValueOr("UNKNOWN")
+            //             );
+            //         })
+            //     .AddTo(this);
         }
     }
 }

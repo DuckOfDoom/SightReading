@@ -51,10 +51,10 @@ namespace DuckOfDoom.SightReading.AudioTools
             }
             
             _source.Play();
-            //
-            // AudioSettings.GetDSPBufferSize(out var dspBufferSize, out var dspNumBuffers);
-            //
-            // _source.timeSamples = (Microphone.GetPosition(_primaryDevice) + AudioSettings.outputSampleRate - 3 * dspBufferSize * dspNumBuffers) % AudioSettings.outputSampleRate;
+            
+            AudioSettings.GetDSPBufferSize(out var dspBufferSize, out var dspNumBuffers);
+            
+            _source.timeSamples = (Microphone.GetPosition(_primaryDevice) + AudioSettings.outputSampleRate - 3 * dspBufferSize * dspNumBuffers) % AudioSettings.outputSampleRate;
         }
 
         public void StopListening()
