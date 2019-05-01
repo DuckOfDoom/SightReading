@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Optional;
+using Optional.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +12,7 @@ namespace DuckOfDoom.SightReading.Visualization
     {
         void VisualizeSamples(float[] samples);
         
-        void SetNote(string note);
+        void AddNote(Option<string> note);
         void SetFrequency(float frequency);
     }
     
@@ -36,7 +39,25 @@ namespace DuckOfDoom.SightReading.Visualization
         }
 
         public void SetFrequency(float frequency) { _frequencyText.text = $"Frequency: {frequency.ToString()} Hz"; }
-        public void SetNote(string note) { _noteText.text = $"Note: {note}"; }
+
+        private readonly Queue<string> _notes = new Queue<string>();
+
+        public void AddNote(Option<string> note)
+        {
+            if (!note.HasValue)
+                return;
+            
+            var last = _notes.LastOrDefault();
+            if (last != null && last == note.ValueOrFailure())
+                return;
+
+            if (_notes.Count > 100)
+                _notes.Dequeue();
+            
+            _notes.Enqueue(note.ValueOrFailure());
+            
+            _noteText.text = $"Notes: {string.Join(" - ", _notes)}";
+        }
 
         private void FixImagesCount(int count)
         {

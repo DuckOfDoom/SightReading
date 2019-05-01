@@ -23,39 +23,19 @@ namespace DuckOfDoom.SightReading.Visualization
             _sub = micHandler.SamplesStream.Subscribe(
                 samples =>
                 {
-                    // view.VisualizeSamples(samples);
+                    view.VisualizeSamples(samples);
 
                     var frequency = fDetector.GetFrequency(samples);
                     var note = fConverter.FrequencyToNote(frequency);
                     
                     view.SetFrequency(frequency);
-                    view.SetNote(note.ValueOr("UNKNOWN"));
+                    view.AddNote(note);
                 });
         }
 
         public void Dispose()
         {
             _sub.Dispose();
-        }
-
-        public void Start()
-        {
-            // MicHandler.SamplesStream.Subscribe(
-            //         samples =>
-            //         {
-            //             VisualizationView.VisualizeSamples(
-            //                 samples
-            //             );
-            //
-            //             var frequency = FrequencyDetector.GetFrequency(samples);
-            //             VisualizationView.SetFrequency(frequency);
-            //             
-            //             VisualizationView.SetNote(
-            //                 FrequencyConverter.FrequencyToNote(frequency)
-            //                     .ValueOr("UNKNOWN")
-            //             );
-            //         })
-            //     .AddTo(this);
         }
     }
 }
