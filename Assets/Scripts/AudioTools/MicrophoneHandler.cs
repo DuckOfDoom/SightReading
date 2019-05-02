@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace DuckOfDoom.SightReading.AudioTools
 {
-    public interface IMicrophoneHandler : IDisposable
+    public interface IAudioStreamSource 
     {
         IObservable<float[]> SamplesStream { get;  }
     }
     
-    public class MicrophoneHandler : IMicrophoneHandler
+    public class MicrophoneHandler : IAudioStreamSource, IDisposable
     {
         private const int FREQUENCY_RESOLUTION = 1024;
         

@@ -383,6 +383,7 @@ MonoBehaviour:
   _frequencyText: {fileID: 1819813943}
   _noteText: {fileID: 875425641}
   _heightMultiplier: 10000
+  _scaleFactor: 1000
 --- !u!1 &875425639
 GameObject:
   m_ObjectHideFlags: 0

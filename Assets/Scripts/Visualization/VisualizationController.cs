@@ -14,7 +14,7 @@ namespace DuckOfDoom.SightReading.Visualization
         private readonly IDisposable _sub;
         
         public VisualizationController(
-            IMicrophoneHandler micHandler,
+            IAudioStreamSource micHandler,
             IFrequencyDetector fDetector,
             IFrequencyConverter fConverter,
             IVisualizationView view

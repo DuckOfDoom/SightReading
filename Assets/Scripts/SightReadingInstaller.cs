@@ -17,7 +17,7 @@ namespace DuckOfDoom.SightReading
                 .AsSingle()
                 .NonLazy();
 
-            var mic = Container.Resolve<IMicrophoneHandler>();
+            var mic = Container.Resolve<IAudioStreamSource>();
             var pDectector = Container.Resolve<IFrequencyDetector>();
 
             mic.SamplesStream.Subscribe(
