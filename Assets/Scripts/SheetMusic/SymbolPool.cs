@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Instrumentation;
 using DuckOfDoom.SightReading.SheetMusic.Views;
 using UnityEngine;
 
@@ -8,8 +9,8 @@ namespace DuckOfDoom.SightReading.SheetMusic
 {
     public interface ISymbolsPool
     {
-        SymbolView Pop();
-        void Push(SymbolView view);
+        ISymbolView Pop();
+        void Push(ISymbolView view);
     }
     
     public class SymbolsPool : ISymbolsPool, IDisposable
@@ -18,17 +19,17 @@ namespace DuckOfDoom.SightReading.SheetMusic
         private readonly SymbolView _symbolViewPrefab;
 
         private const string SYMBOL_VIEW_PREFAB_PATH = "Prefabs/Symbol";
-
-        private readonly Stack<SymbolView> _freeSymbols = new Stack<SymbolView>();
-
+        private readonly Stack<ISymbolView> _freeSymbols = new Stack<ISymbolView>();
+        
         private int PRELOAD_COUNT = 10;
 
         public SymbolsPool(Canvas rootCanvas)
         {
-            var heapGo = new GameObject("SymbolPoolHeap").transform;
-            heapGo.transform.parent = rootCanvas.transform;
-            
-            _heap = heapGo.transform;
+            var heapTransform = new GameObject("SymbolPoolHeap").transform;
+            heapTransform.parent = rootCanvas.transform;
+            heapTransform.gameObject.SetActive(false);
+
+            _heap = heapTransform;
             _symbolViewPrefab = Resources.Load<SymbolView>(SYMBOL_VIEW_PREFAB_PATH);
             
             Preload(PRELOAD_COUNT);
@@ -40,7 +41,7 @@ namespace DuckOfDoom.SightReading.SheetMusic
             UnityEngine.Object.Destroy(_heap);
         }
 
-        public SymbolView Pop()
+        public ISymbolView Pop()
         {
             if (!_freeSymbols.Any())
             {
@@ -51,13 +52,13 @@ namespace DuckOfDoom.SightReading.SheetMusic
             return _freeSymbols.Pop();
         }
 
-        public void Push(SymbolView view)
+        public void Push(ISymbolView view)
         {
-            view.transform.SetParent(_heap);
+            view.RectTransform.SetParent(_heap);
             _freeSymbols.Push(view);
         }
 
-        private SymbolView InstantiateNewSymbol()
+        private ISymbolView InstantiateNewSymbol()
         {
             return UnityEngine.Object.Instantiate(_symbolViewPrefab, _heap, false);
         }

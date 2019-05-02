@@ -1,5 +1,4 @@
 using DuckOfDoom.SightReading.SheetMusic.Views;
-using UnityEngine.Networking;
 using Zenject;
 
 namespace DuckOfDoom.SightReading.SheetMusic
@@ -17,7 +16,7 @@ namespace DuckOfDoom.SightReading.SheetMusic
         {
             var view = Pool.Pop();
 
-            view.HasStem = symbol.Duration >= Duration.Quarter;
+            view.HasStem = view.IsFilled = symbol.Duration >= Duration.Quarter;
             
             // Add beaming options
             if (symbol.Duration == Duration.Eighth)
@@ -26,8 +25,6 @@ namespace DuckOfDoom.SightReading.SheetMusic
                 view.FlagsCount = 2;
             else
                 view.FlagsCount = 0;
-
-            view.IsFilled = symbol.Duration >= Duration.Quarter;
                 
             return view;
         }
