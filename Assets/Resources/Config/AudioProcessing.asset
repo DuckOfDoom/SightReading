@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _frequencyResolution: 1024
   _minAmplitudeForFrequency: 0.001
-  _noteDetectionInterval: 0.1
+  _noteDetectionInterval: 0.01

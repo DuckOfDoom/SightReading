@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Optional;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -119,6 +121,23 @@ namespace DuckOfDoom.SightReading.Visualization
 
                     _images.Add(i);
                 }
+
+                // disable layout group for performance
+                Observable.NextFrame()
+                    .Subscribe(
+                        _ =>
+                        {
+                            _sourceImage.transform.parent.GetComponent<HorizontalLayoutGroup>()
+                                .SomeNotNull()
+                                .Match(
+                                    g => Destroy(g),
+                                    () => Debug.LogError(
+                                        "No HorizontalLayoutGroup! This code does nothing!",
+                                        _sourceImage.transform.parent
+                                    )
+                                );
+                        })
+                    .AddTo(this);
             }
             else if (_images.Count > count)
             {
