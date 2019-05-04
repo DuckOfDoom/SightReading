@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Optional;
 using UniRx;
 using UnityEngine;
 
@@ -33,7 +36,11 @@ namespace DuckOfDoom.SightReading.SheetMusic
             
             Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.R))
-                .Subscribe( _ => { PlaceRandomNotes(); })
+                .Subscribe(
+                    _ =>
+                    {
+                        PlaceNotes();
+                    })
                 .AddTo(_disposables);
         }
 
@@ -42,30 +49,57 @@ namespace DuckOfDoom.SightReading.SheetMusic
             _disposables.Dispose();
         }
 
-        private void PlaceRandomNotes()
+        private void PlaceNotes()
         {
             _staffView.Clear();
-            
+            // foreach (var symbol in GetRandomNotes())
+            foreach (var symbol in GetLick())
+            {
+                symbol.Note.Match(
+                    note =>
+                    {
+                        var posY = MusicUtils.GetNotePosition(note.Name, note.Octave);
+                        _staffView.PlaceSymbol(posY, symbol.Duration, _symbolsFactory.GetSymbol(symbol));
+                    },
+                    () => Debug.LogError("Not a note!"));
+            }
+        }
+        
+        private IEnumerable<Symbol> GetRandomNotes()
+        {
             var rand = new System.Random();
             
             for (var i = 0; i < 5; i++)
             {
-                var type = SymbolType.Note;
                 var duration = (Duration) rand.Next(1, 6);
-                var symbol =
+                var noteName = (NoteName) rand.Next(1, 7);
+                var accidental = (Accidental) rand.Next(1, 6);
+                var octave = rand.Next(3, 5);
+
+                yield return
                     new Symbol
                     {
-                        Type = type,
                         Duration = duration,
+                        Note = new Note(noteName, accidental, octave).Some()
                     };
-                
-                var view = _symbolsFactory.GetSymbol(symbol);
-                var yPos = rand.Next(-5, 5); 
-                
-                Debug.Log($"Placing symbol: {symbol}, {yPos}");
-                
-                _staffView.PlaceSymbol(yPos, duration, view);
             }
+        }
+
+        private IEnumerable<Symbol> GetLick()
+        {
+            yield return new Symbol(Duration.Eighth, new Note(NoteName.D, 3).Some());
+            yield return new Symbol(Duration.Eighth, new Note(NoteName.E, 3).Some());
+            yield return new Symbol(Duration.Eighth, new Note(NoteName.F, 3).Some());
+            yield return new Symbol(Duration.Eighth, new Note(NoteName.G, 3).Some());
+            yield return new Symbol(Duration.Quarter, new Note(NoteName.E, 3).Some());
+            yield return new Symbol(Duration.Eighth, new Note(NoteName.C, 3).Some());
+            yield return new Symbol(Duration.Eighth, new Note(NoteName.D, 3).Some());
+        }
+
+        private void PlaceRandomNotes()
+        {
+            _staffView.Clear();
+            
         }
     }
 }

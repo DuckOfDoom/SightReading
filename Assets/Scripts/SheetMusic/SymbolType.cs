@@ -3,6 +3,7 @@ namespace DuckOfDoom.SightReading.SheetMusic
     public enum SymbolType
     {
         Undefined = 0,
+        
         Note = 1,
         Rest = 2
     }
@@ -22,13 +23,13 @@ namespace DuckOfDoom.SightReading.SheetMusic
     {
         Undefined = 0,
         
-        C = 0,
-        D = 1,
-        E = 2,
-        F = 3,
-        G = 4,
-        A = 5,
-        B = 6
+        B = 1,
+        C = 2,
+        D = 3,
+        E = 4,
+        F = 5,
+        G = 6,
+        A = 7,
     }
 
     public enum Accidental
