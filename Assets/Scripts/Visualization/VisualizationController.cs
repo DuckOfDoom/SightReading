@@ -11,31 +11,35 @@ namespace DuckOfDoom.SightReading.Visualization
     
     public class VisualizationController : IVisualizationController
     {
-        private readonly IDisposable _sub;
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         
         public VisualizationController(
             IAudioStreamSource micHandler,
-            IFrequencyDetector fDetector,
-            IFrequencyConverter fConverter,
+            INoteDetector noteDetector,
             IVisualizationView view
             )
         {
-            _sub = micHandler.SamplesStream.Subscribe(
+            micHandler.SamplesStream.Subscribe(
                 samples =>
                 {
                     view.VisualizeSamples(samples);
 
-                    var frequency = fDetector.GetFrequency(samples);
-                    var note = fConverter.FrequencyToNote(frequency);
-                    
-                    view.SetFrequency(frequency);
-                    view.AddNote(note);
-                });
+                    // var note = noteDetector.DetectedNotes
+                    //
+                    // // var frequency = fDetector.GetFrequency(samples);
+                    // // var note = fConverter.FrequencyToNote(frequency);
+                    //
+                    // view.AddNote(note);
+
+                    noteDetector.AddSamples(samples);
+                }).AddTo(_disposables);
+
+            noteDetector.DetectedNotes.Subscribe(note => { view.AddNote(note); });
         }
 
         public void Dispose()
         {
-            _sub.Dispose();
+            _disposables.Dispose();
         }
     }
 }

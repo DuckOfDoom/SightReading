@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Optional;
-using Optional.Unsafe;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,9 +8,7 @@ namespace DuckOfDoom.SightReading.Visualization
     public interface IVisualizationView : IDisposable
     {
         void VisualizeSamples(float[] samples);
-        
-        void AddNote(Option<string> note);
-        void SetFrequency(float frequency);
+        void AddNote(string note);
     }
     
     public class VisualizationView : MonoBehaviour, IVisualizationView
@@ -49,20 +44,19 @@ namespace DuckOfDoom.SightReading.Visualization
             _frequencyText.text = $"Frequency: {frequency.ToString()} Hz";
         }
 
-        public void AddNote(Option<string> note)
+        public void AddNote(string note)
         {
-            if (!note.HasValue)
-                return;
+            _noteText.text = $"Note: {note}";
             
-            var last = _notes.LastOrDefault();
-            if (last != null && last == note.ValueOrFailure())
-                return;
-
-            if (_notes.Count > 100)
-                _notes.Dequeue();
-            
-            _notes.Enqueue(note.ValueOrFailure());
-            _noteText.text = $"Notes: {string.Join(" - ", _notes)}";
+            // var last = _notes.LastOrDefault();
+            // if (last != null && last == note)
+            //     return;
+            //
+            // if (_notes.Count > 100)
+            //     _notes.Dequeue();
+            //
+            // _notes.Enqueue(note);
+            // _noteText.text = $"Notes: {string.Join(" - ", _notes)}";
         }
 
 

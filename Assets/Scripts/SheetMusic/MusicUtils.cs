@@ -7,7 +7,6 @@ namespace DuckOfDoom.SightReading.SheetMusic
         /// </summary>
         public static int GetNotePosition(NoteName note, int octave)
         {
-            // var distanceFromB = note
 
             return 0;
         }

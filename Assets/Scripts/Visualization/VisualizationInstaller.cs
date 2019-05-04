@@ -12,6 +12,11 @@ namespace DuckOfDoom.SightReading.Visualization
         
         public override void InstallBindings()
         {
+            Container.BindInterfacesTo<AudioProcessingConfig>()
+                .FromMethod(_ => Config.Load<AudioProcessingConfig>(Consts.AUDIO_PROCESSING_CONFIG_PATH))
+                .AsSingle()
+                .NonLazy();
+            
 #if BASS_MIC_HANDLER
             Container.BindInterfacesTo<BassMicrophoneHandler>()
 #else
@@ -21,12 +26,8 @@ namespace DuckOfDoom.SightReading.Visualization
                 .AsSingle()
                 .NonLazy();
             
-            Container.BindInterfacesTo<FrequencyDetector>()
-                .FromNew()
-                .AsSingle()
-                .NonLazy();
             
-            Container.BindInterfacesTo<FrequencyConverter>()
+            Container.BindInterfacesTo<NoteDetector>()
                 .FromNew()
                 .AsSingle()
                 .NonLazy();

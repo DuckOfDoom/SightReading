@@ -15,12 +15,13 @@ namespace DuckOfDoom.SightReading.AudioTools
         private readonly AudioSource _source;
         private readonly string _primaryDevice;
 
-        private readonly float[] _samples = new float[Consts.FREQUENCY_RESOLUTION];
+        private readonly float[] _samples;
 
         public IObservable<float[]> SamplesStream { get;}
         
-        public UnityMicrophoneHandler()
+        public UnityMicrophoneHandler(IAudioProcessingConfig config)
         {
+            _samples = new float[config.FrequencyResolution];
             _primaryDevice = Microphone.devices.First();
             _source = new GameObject("MicrophoneHandlerSource").AddComponent<AudioSource>();
 

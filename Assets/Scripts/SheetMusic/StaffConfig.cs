@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DuckOfDoom.SightReading.AudioTools;
 using Optional;
 using Optional.Collections;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace DuckOfDoom.SightReading.SheetMusic
     }
     
     [CreateAssetMenu(fileName = "StaffConfig", menuName = "StaffConfig", order = 51)]
-    public class StaffConfig : ScriptableObject, IStaffConfig
+    public class StaffConfig : Config, IStaffConfig
     {
         [Serializable]
         public struct DistanceOffsetEntry
@@ -38,22 +39,11 @@ namespace DuckOfDoom.SightReading.SheetMusic
         [SerializeField] private List<DistanceOffsetEntry> _distanceMultipliersForDuration = new List<DistanceOffsetEntry>();
 #pragma warning restore 0649
         
-        private const string PATH = "Config/StaffConfig";
-        
         private Dictionary<Duration, float> _durations = new Dictionary<Duration, float>();
         
         public float DistanceBetweenSymbolsVertical => _distanceBetweenSymbolsVertical;
         public float DistanceBetweenSymbolsHorizontal => _distanceBetweenSymbolsHorizontal;
         
-        public static StaffConfig Load()
-        {
-            var cfg = Resources.Load<StaffConfig>(PATH);
-            if (cfg == null)
-                throw new NullReferenceException($"Can't load StaffConfig from path '{PATH}'!");
-            
-            return cfg;
-        }
-
         public Option<float> GetDistanceOffsetMultiplier(Duration symbolDuration)
         {
             return _durations.GetValueOrNone(symbolDuration);

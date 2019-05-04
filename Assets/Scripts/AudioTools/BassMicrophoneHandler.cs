@@ -11,15 +11,18 @@ namespace DuckOfDoom.SightReading.AudioTools
     /// </summary>
     public class BassMicrophoneHandler : IAudioStreamSource, IDisposable
     {
-        public IObservable<float[]> SamplesStream { get; }
+        private readonly float[] _samples;
         private int _recordingHandle;
-        
-        private readonly float[] _samples = new float[Consts.FREQUENCY_RESOLUTION];
         private RECORDPROC _recordProc;
         
-        public BassMicrophoneHandler()
+        public IObservable<float[]> SamplesStream { get; }
+        
+        public BassMicrophoneHandler(IAudioProcessingConfig config)
         {
+            _samples = new float[config.FrequencyResolution];
+            
             PrintDebugInfo();
+            
             SamplesStream = Observable.EveryUpdate()
                 .Where(_ => _recordingHandle != Bass.FALSE)
                 .Select(_ => ProcessRecordedData());
@@ -32,11 +35,11 @@ namespace DuckOfDoom.SightReading.AudioTools
             if (_recordingHandle != Bass.FALSE)
             {
                 var stop = Bass.BASS_ChannelStop(_recordingHandle);
-                Debug.Log("BASS_ChannelStop == " + stop);
+                Debug.Log("[BassMicrophoneHandler] BASS_ChannelStop == " + stop);
             }
             
             var free = Bass.BASS_RecordFree();
-            Debug.Log("BASS_RecordFree == " + free);
+            Debug.Log("[BassMicrophoneHandler] BASS_RecordFree == " + free);
         }
 
         private void StartRecording()
@@ -44,7 +47,7 @@ namespace DuckOfDoom.SightReading.AudioTools
             // var device = Bass.BASS_RecordGetDeviceInfos().FirstOrDefault();
             if (Bass.BASS_RecordInit(-1))
             {
-                Debug.Log("BASS_RecordInit = true");
+                Debug.Log("[BassMicrophoneHandler] BASS_RecordInit = true");
                 
                 _recordProc = OnRecord;
                 _recordingHandle = Bass.BASS_RecordStart(
@@ -57,19 +60,19 @@ namespace DuckOfDoom.SightReading.AudioTools
 
                 if (_recordingHandle == Bass.FALSE)
                 {
-                    Debug.LogError($"BASS_RecordStart returned 0!");
+                    Debug.LogError($"[BassMicrophoneHandler] BASS_RecordStart returned 0!");
                     return;
                 }
                 else
                 {
-                    Debug.Log($"Recording Handle: {_recordingHandle}");
+                    Debug.Log($"[BassMicrophoneHandler] Recording Handle: {_recordingHandle}");
                     var play = Bass.BASS_ChannelPlay(_recordingHandle, false);
-                    Debug.Log("BASS_ChannelPlay == " + play);
+                    Debug.Log("[BassMicrophoneHandler] BASS_ChannelPlay == " + play);
                 }
             }
             else
             {
-                Debug.LogError("BASS_RecordInit == False!");
+                Debug.LogError("[BassMicrophoneHandler] BASS_RecordInit == False!");
             }
         }
 
@@ -83,12 +86,11 @@ namespace DuckOfDoom.SightReading.AudioTools
                 var di = devicesInfos[index];
                 sb.AppendLine(di.ToString());
             }
-            
-            Debug.Log(sb.ToString());
+
+            Debug.Log("[BassMicrophoneHandler]\n " + sb);
         }
 
         private bool OnRecord(int handle, IntPtr buffer, int length, IntPtr user) { return true; }
-        
         
         private float[] ProcessRecordedData()
         {
