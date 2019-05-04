@@ -36,11 +36,12 @@ namespace DuckOfDoom.SightReading.SheetMusic
             
             Observable.EveryUpdate()
                 .Where(_ => Input.GetKeyDown(KeyCode.R))
-                .Subscribe(
-                    _ =>
-                    {
-                        PlaceNotes();
-                    })
+                .Subscribe( _ => { PlaceNotes(GetRandomNotes()); })
+                .AddTo(_disposables);
+                
+            Observable.EveryUpdate()
+                .Where(_ => Input.GetKeyDown(KeyCode.L))
+                .Subscribe( _ => { PlaceNotes(GetLick()); })
                 .AddTo(_disposables);
         }
 
@@ -49,11 +50,10 @@ namespace DuckOfDoom.SightReading.SheetMusic
             _disposables.Dispose();
         }
 
-        private void PlaceNotes()
+        private void PlaceNotes(IEnumerable<Symbol> notes)
         {
             _staffView.Clear();
-            // foreach (var symbol in GetRandomNotes())
-            foreach (var symbol in GetLick())
+            foreach (var symbol in notes)
             {
                 symbol.Note.Match(
                     note =>
