@@ -500,9 +500,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _contents: {fileID: 1895104673}
-  _b1Position: 0
-  _distanceBetweenSymbolsVertical: 10
-  _distanceBetweenSymbolsHorizontal: 50
 --- !u!1 &1282031472
 GameObject:
   m_ObjectHideFlags: 0
@@ -982,11 +979,11 @@ RectTransform:
   m_Father: {fileID: 1093977758}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: -0.000030517578, y: 0}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &1896558871
 GameObject:
   m_ObjectHideFlags: 0

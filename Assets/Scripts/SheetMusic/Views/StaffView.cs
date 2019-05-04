@@ -1,4 +1,4 @@
-using Boo.Lang;
+using System.Collections.Generic;
 using DuckOfDoom.SightReading.SheetMusic.Views;
 using UnityEngine;
 using Zenject;
@@ -10,10 +10,7 @@ namespace DuckOfDoom.SightReading.SheetMusic
         /// <summary>
         ///     Places a symbol on a staff.
         /// </summary>
-        /// <param name="positionX">Position on a horizontal axis</param>
-        /// <param name="positionY">Position on a vertical axis. 0 is middle line of the staff.</param>
-        /// <param name="view">Symbol to place</param>
-        void PlaceSymbol(int positionX, int positionY, ISymbolView view);
+        void PlaceSymbol(int positionY, Duration symbolDuration, ISymbolView view);
         
         /// <summary>
         ///     Moves the stave horizontally
@@ -30,26 +27,36 @@ namespace DuckOfDoom.SightReading.SheetMusic
     {
 #pragma warning disable 0649
         [SerializeField] private RectTransform _contents;
-
-        [SerializeField] private float _b1Position;
-        [SerializeField] private float _distanceBetweenSymbolsVertical = 10f;
-        [SerializeField] private float _distanceBetweenSymbolsHorizontal = 10f;
 #pragma warning restore 0649
         
         [Inject] private ISymbolsPool SymbolsPool { get; set; }
+        [Inject] private IStaffConfig Config { get; set; }
         
         private readonly List<ISymbolView> _symbolsOnTheStaff = new List<ISymbolView>();
+        private float _lastSymbolPosition;
+        private Duration _lastSymbolDuration;
 
-        public void PlaceSymbol(int positionX, int positionY, ISymbolView view)
+        public void PlaceSymbol(int positionY, Duration symbolDuration, ISymbolView view)
         {
-            var posX = positionX * _distanceBetweenSymbolsHorizontal;
-            var posY = _b1Position + positionY * _distanceBetweenSymbolsVertical;
+            var offsetMultiplier = 0f;
+            if (_lastSymbolDuration != Duration.Undefined)
+            {
+                offsetMultiplier = Config.GetDistanceOffsetMultiplier(_lastSymbolDuration)
+                    .Check($"[StaffView] There is no distance offset for duration '{_lastSymbolDuration}' in StaffConfig!")
+                    .ValueOr(0);
+            }
+
+            var posX = _lastSymbolPosition + Config.DistanceBetweenSymbolsHorizontal * offsetMultiplier;
+            var posY = positionY * Config.DistanceBetweenSymbolsVertical;
             var rt = view.RectTransform;
             
             rt.SetParent(_contents, false);
             rt.anchoredPosition = new Vector2(posX, posY);
 
             _symbolsOnTheStaff.Add(view);
+
+            _lastSymbolPosition = posX;
+            _lastSymbolDuration = symbolDuration;
         }
 
         public void Advance(float distance)
@@ -59,11 +66,22 @@ namespace DuckOfDoom.SightReading.SheetMusic
 
         public void Clear()
         {
+            _lastSymbolDuration = Duration.Undefined;
+            _lastSymbolPosition = 0;
+            
             for (var i = _symbolsOnTheStaff.Count - 1; i >= 0; i--)
             {
                 SymbolsPool.Push(_symbolsOnTheStaff[i]);
                 _symbolsOnTheStaff.RemoveAt(i);
             }
+            
+            // var keys = _symbolsOnTheStaff.Keys.ToList();
+            //
+            // foreach (var k in keys)
+            // {
+            //     SymbolsPool.Push(_symbolsOnTheStaff[k]);
+            //     _symbolsOnTheStaff.Remove(k);
+            // }
         }
     }
 }

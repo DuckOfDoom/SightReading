@@ -12,6 +12,11 @@ namespace DuckOfDoom.SightReading.SheetMusic
 
         public override void InstallBindings()
         {
+            Container.BindInterfacesTo<StaffConfig>()
+                .FromMethod(_ => StaffConfig.Load())
+                .AsSingle()
+                .NonLazy();
+            
             Container.Bind<IStaffView>()
                 .FromInstance(_staffView)
                 .AsSingle()

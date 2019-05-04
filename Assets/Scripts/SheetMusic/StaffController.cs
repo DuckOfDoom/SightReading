@@ -64,7 +64,7 @@ namespace DuckOfDoom.SightReading.SheetMusic
                 
                 Debug.Log($"Placing symbol: {symbol}, {yPos}");
                 
-                _staffView.PlaceSymbol(i, yPos, view);
+                _staffView.PlaceSymbol(yPos, duration, view);
             }
         }
     }
