@@ -12,7 +12,11 @@ namespace DuckOfDoom.SightReading.Visualization
         
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<MicrophoneHandler>()
+#if BASS_MIC_HANDLER
+            Container.BindInterfacesTo<BassMicrophoneHandler>()
+#else
+            Container.BindInterfacesTo<UnityMicrophoneHandler>()
+#endif
                 .FromNew()
                 .AsSingle()
                 .NonLazy();
@@ -36,12 +40,6 @@ namespace DuckOfDoom.SightReading.Visualization
                 .FromNew()
                 .AsSingle()
                 .NonLazy();
-
-            // Container.BindInterfacesTo<VisualizationController>()
-            //     .FromNewComponentOnNewGameObject()
-            //     .WithGameObjectName("VisualizationController")
-            //     .AsSingle()
-            //     .NonLazy();
         }
     }
 }

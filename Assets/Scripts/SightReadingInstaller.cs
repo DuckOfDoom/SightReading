@@ -9,7 +9,7 @@ namespace DuckOfDoom.SightReading
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<MicrophoneHandler>()
+            Container.BindInterfacesTo<UnityMicrophoneHandler>()
                 .AsSingle()
                 .NonLazy();
             

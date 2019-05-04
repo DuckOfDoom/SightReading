@@ -40,8 +40,8 @@ namespace DuckOfDoom.SightReading.Visualization
             //     Debug.DrawLine(new Vector3(Mathf.Log(i - 1), Mathf.Log(samples[i - 1]), 3), new Vector3(Mathf.Log(i), Mathf.Log(samples[i]), 3), Color.blue);
             // }
 
-            // VisualizeInUI(samples);
-            VisualizeInScene(samples);
+            VisualizeInUI(samples);
+            // VisualizeInScene(samples);
         }
 
         public void SetFrequency(float frequency)
